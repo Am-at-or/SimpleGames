@@ -10,8 +10,8 @@ public class BattleShip {
 		Scanner sc = new Scanner(System.in);
 		int[] ships = { 4, 3, 3, 2, 2, 2, 1, 1, 1, 1 };
 		for (int i = 0; i < ships.length; i++) {
-			positioningShipsAuto(fieldComp12, ships[i]);
-			positioningShipsAuto(fieldUser12, ships[i]);
+			drawShips(fieldComp12, ships[i]);
+			drawShips(fieldUser12, ships[i]);
 		}
 		System.out.println("Кораблі компа:");
 		int[][] fieldComp = matrixTo10(fieldComp12);
@@ -36,20 +36,6 @@ public class BattleShip {
 			if (whoWins(fieldUser)) {
 				System.out.println("Комп виграв!");
 				break;
-			}
-		}
-	}
-
-	static void positioningShipsAuto(int[][] arr, int length) {
-		boolean b = true;
-		while (b) {
-			int z = random(0, 1);
-			int arr1[] = checking(arr, z, length);
-			int x = arr1[0];
-			int y = arr1[1];
-			if (arr1[2] == 1) {
-				drawShips(arr, x, y, length, z);
-				b = false;
 			}
 		}
 	}
@@ -88,22 +74,11 @@ public class BattleShip {
 		return (int) Math.round(Math.random() * (max - min) + min);
 	}
 
-	static void drawShips(int[][] arr, int x, int y, int length, int z) {
-		for (int i = 0; i < length; i++) {
-			arr[x][y] = 2;
-			if (z == 1)
-				x++;
-			else
-				y++;
-		}
-	}
-
-	static int[] checking(int[][] arr, int z, int length) {
+	static void drawShips(int[][] arr, int length) {
 		int x = 0;
 		int y = 0;
 		int n = 0;
-		int b = 0;
-		int[] arr1 = new int[3];
+		int z = random(0, 1);
 		if (z == 0) {
 			x = random(1, 10);
 			y = random(1, 11 - length);
@@ -111,7 +86,7 @@ public class BattleShip {
 				if (arr[x - 1][y + i] == 0 && arr[x][y + i] == 0 && arr[x + 1][y + i] == 0)
 					n++;
 			}
-		} else if (z == 1) {
+		} else {
 			x = random(1, 11 - length);
 			y = random(1, 10);
 			for (int i = -1; i < length + 1; i++) {
@@ -119,12 +94,17 @@ public class BattleShip {
 					n++;
 			}
 		}
-		if (n == length + 2)
-			b = 1;
-		arr1[0] = x;
-		arr1[1] = y;
-		arr1[2] = b;
-		return arr1;
+		if (n != length + 2)
+			drawShips(arr, length);
+		
+		for (int i = 0; i < length; i++) {
+			arr[x][y] = 2;
+			if (z == 1)
+				x++;
+			else
+				y++;
+		}
+
 	}
 
 	static void shootingUser(int[][] arr, Scanner sc) {
