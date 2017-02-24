@@ -153,4 +153,17 @@ public class BattleShip {
 		return arr;
 	}
 	
+<<<<<<< HEAD
+=======
+	static int[][] matrixTo12312232(int[][] array) {
+		int[][] arr = new int[10][10];
+		for (int i = 0; i < arr.length; i++) {
+			for (int j = 0; j < arr.length; j++) {
+				arr[i][j] = array[i + 1][j + 1];
+			}
+		}
+		return arr;
+	}
+	
+>>>>>>> refs/heads/test1
 }
