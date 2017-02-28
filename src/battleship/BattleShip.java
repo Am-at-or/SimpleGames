@@ -10,8 +10,8 @@ public class BattleShip {
 		Scanner sc = new Scanner(System.in);
 		int[] ships = { 4, 3, 3, 2, 2, 2, 1, 1, 1, 1 };
 		for (int i = 0; i < ships.length; i++) {
-			drawShips(fieldComp12, ships[i]);
-			drawShips(fieldUser12, ships[i]);
+			drawShip(fieldComp12, ships[i]);
+			drawShip(fieldUser12, ships[i]);
 		}
 		System.out.println("Кораблі компа:");
 		int[][] fieldComp = matrixTo10(fieldComp12);
@@ -23,15 +23,13 @@ public class BattleShip {
 		while (true) {
 			shootingUser(fieldComp, sc);
 			System.out.println("Кораблі компа:");
-
 			printHide(fieldComp);
 			if (whoWins(fieldComp)) {
 				System.out.println("Ви виграли!");
 				break;
 			}
-			System.out.println();
 			shootingComp(fieldUser);
-			System.out.println("Ваші кораблі:");
+			System.out.println("\nВаші кораблі:");
 			printHide(fieldUser);
 			if (whoWins(fieldUser)) {
 				System.out.println("Комп виграв!");
@@ -45,7 +43,7 @@ public class BattleShip {
 			for (int j = 0; j < array[i].length; j++) {
 				if (array[i][j] == 0)
 					System.out.print("· ");
-				if (array[i][j] == 2)
+				if (array[i][j] == 1)
 					System.out.print("■ ");
 			}
 			System.out.println();
@@ -60,10 +58,8 @@ public class BattleShip {
 				if (array[i][j] == 1)
 					System.out.print("· ");
 				if (array[i][j] == 2)
-					System.out.print("· ");
-				if (array[i][j] == 3)
 					System.out.print("* ");
-				if (array[i][j] == 4)
+				if (array[i][j] == 3)
 					System.out.print("x ");
 			}
 			System.out.println();
@@ -74,7 +70,7 @@ public class BattleShip {
 		return (int) Math.round(Math.random() * (max - min) + min);
 	}
 
-	static void drawShips(int[][] arr, int length) {
+	static void drawShip(int[][] arr, int length) {
 		int x = 0;
 		int y = 0;
 		int n = 0;
@@ -83,28 +79,29 @@ public class BattleShip {
 			x = random(1, 10);
 			y = random(1, 11 - length);
 			for (int i = -1; i < length + 1; i++) {
-				if (arr[x - 1][y + i] == 0 && arr[x][y + i] == 0 && arr[x + 1][y + i] == 0)
+				if (arr[x - 1][y + i] == 0 && arr[x][y + i] == 0
+						&& arr[x + 1][y + i] == 0)
 					n++;
 			}
 		} else {
 			x = random(1, 11 - length);
 			y = random(1, 10);
 			for (int i = -1; i < length + 1; i++) {
-				if (arr[x + i][y - 1] == 0 && arr[x + i][y] == 0 && arr[x + i][y + 1] == 0)
+				if (arr[x + i][y - 1] == 0 && arr[x + i][y] == 0
+						&& arr[x + i][y + 1] == 0)
 					n++;
 			}
 		}
-		if (n != length + 2)
-			drawShips(arr, length);
-		
-		for (int i = 0; i < length; i++) {
-			arr[x][y] = 2;
-			if (z == 1)
-				x++;
-			else
-				y++;
-		}
-
+		if (n == length + 2) {
+			for (int i = 0; i < length; i++) {
+				arr[x][y] = 1;
+				if (z == 1)
+					x++;
+				else
+					y++;
+			}
+		} else
+			drawShip(arr, length);
 	}
 
 	static void shootingUser(int[][] arr, Scanner sc) {
@@ -112,19 +109,31 @@ public class BattleShip {
 		int x = sc.nextInt() - 1;
 		System.out.println("Введіть стовбець для стрільби:");
 		int y = sc.nextInt() - 1;
-		if (arr[x][y] == 0) {
-			arr[x][y] = 3; // мимо
-		} else if (arr[x][y] == 2)
-			arr[x][y] = 4; // попав
+		if (x < 0 || x > 9 || y < 0 || y > 9) {
+			System.out.println("Вводіть допустимі значення!");
+			shootingUser(arr, sc);
+		} else {
+			if (arr[x][y] == 0) {
+				arr[x][y] = 2; // мимо
+			} else if (arr[x][y] == 1)
+				arr[x][y] = 3; // попав
+			else if (arr[x][y] == 2 || arr[x][y] == 3) {
+				System.out.println("Ви вже стріляли по цьому місцю!");
+				shootingUser(arr, sc);
+			}
+		}
 	}
 
 	static void shootingComp(int[][] arr) {
 		int x = random(0, 9);
 		int y = random(0, 9);
 		if (arr[x][y] == 0) {
-			arr[x][y] = 3; // мимо
-		} else if (arr[x][y] == 2)
-			arr[x][y] = 4; // попав
+			arr[x][y] = 2; // мимо
+		} else if (arr[x][y] == 1)
+			arr[x][y] = 3; // попав
+		else {
+			shootingComp(arr);
+		}
 	}
 
 	static boolean whoWins(int[][] array) {
@@ -132,7 +141,7 @@ public class BattleShip {
 		boolean b = false;
 		for (int i = 0; i < array.length; i++) {
 			for (int j = 0; j < array[i].length; j++) {
-				if (array[i][j] == 4) {
+				if (array[i][j] == 3) {
 					n++;
 				}
 			}
